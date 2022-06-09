@@ -1,6 +1,6 @@
 # 技術試験用認証アプリのリポジトリです。
 
-* React TypeScript
 * JavaScript (VanillaJS)
+* React TypeScript
 
 二つのバージョンを用意しました。
