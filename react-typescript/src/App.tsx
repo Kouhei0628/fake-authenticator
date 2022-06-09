@@ -11,7 +11,7 @@ export default function App() {
   let [nodes, setNodes] = useState<JSX.Element[]>(listItem);
 
   nodes = listItem;
-
+// ここの余剰な再レンダリングはなるべく控えたい
   useMemo(() => {
     setTimeout(() => {
       if (count < 145) {
@@ -21,6 +21,10 @@ export default function App() {
       }
     }, 32);
   }, [count]);
+  /**
+  * onclickでのコード追加/削除イベント
+  * 上の関数なしでは動かなかった。（再レンダリングされなかった）
+  */
   const onClickPush = () => {
     numbers.push(numbers.length + 1);
     nodes.push(
@@ -39,24 +43,25 @@ export default function App() {
     nodes.pop();
     setNodes(nodes);
   };
+  
   return (
     <>
       <SMainDiv>
         <SMainTitle>Fake Authenticator</SMainTitle>
         <SBtnWrap>
           <button
-            disabled={nodes.length ? false : true}
+            disabled={nodes.length ? false : true}// リストが空になったらbuttonをdisabled
             onClick={() => onClickPop()}>
             -
           </button>
           <button onClick={() => onClickPush()}>+</button>
         </SBtnWrap>
-        <SCodeUl>{nodes}</SCodeUl>
+        <SCodeUl>{nodes}</SCodeUl>{/* ここにリストを追加 */}
       </SMainDiv>
     </>
   );
 }
-
+// 疑似乱数
 const createFakeCodes = (): string => {
   const randomNum = Math.floor(Math.random() * 1000000);
   const organizedNum = ("000000" + randomNum).slice(-6);
@@ -67,11 +72,11 @@ type Props = {
   id: number;
   count: number;
 };
-
+// コードのリスト（子要素）
 const CodeList: FC<Props> = memo((props) => {
   const { id, count } = props;
   const [codes, setCodes] = useState<string>(createFakeCodes());
-
+  // 10sごとに擬似乱数生成
   useEffect(() => {
     const intervalB = setInterval(() => {
       setCodes((c) => createFakeCodes());
@@ -95,17 +100,18 @@ const CodeList: FC<Props> = memo((props) => {
     </>
   );
 });
+// ローダーのコンポーネント
 const AfterPie = memo(() => {
   const [count, setCount] = useState(0);
-  setTimeout(() => {
+  setTimeout(() => { // 10sかけてsvgのストロークが145に達するようにする
     if (count < 145) {
       setCount(count + 0.5);
     } else {
       setCount(0);
     }
-  }, 32);
+  }, 100000 / (145 * 2));
   return (
-    <>
+    <>　{/* <circle/>を使用。 */}
       <SAfterPie
         cx="50%"
         cy="50%"
@@ -115,6 +121,7 @@ const AfterPie = memo(() => {
     </>
   );
 });
+{/**  */}
 const SMainDiv = styled.div`
   font-family: Arial, Helvetica, sans-serif;
   width: 85%;
