@@ -5,27 +5,29 @@ const add = document.querySelector('.add');
 // <ul/>タグ 
 let codeList = document.querySelector('.code-list');
 
-//10sかけてsvg描画 
-function rotatePerTen() {
-    let n = 0;
-    const pie = document.querySelectorAll('.fake__pie__after');
-    setInterval(() => {
-        n += 0.5;
-        if (n > 145) {
-            clearInterval();
-        } else {
-            pie.forEach((el) => {
-                el.style.strokeDasharray = `${n} 145`;
-            });
-        }
-    }, 10000 / (145 * 2));
-}
 // 疑似乱数を3桁区切りで生成 
 const createFakeCodes = () => {
     const randomNum = Math.floor(Math.random() * 1000000);
     const organizedNum = ("000000" + randomNum).slice(-6);
     return organizedNum.slice(0, 3) + " " + organizedNum.slice(3, 6);
 };
+let n = 0;
+/** 10sほどでsvgのストロークが一周する 
+ * 問題点：クリックで要素が追加される度に回転速度が早まってしまう
+ * 逆に削除すると遅くなる。↓
+ * */
+setInterval(() => {
+    const pies = document.querySelectorAll('.fake__pie__after');
+    pies.forEach((el) => {
+        if (n < 145) { n += 0.25 } else {
+            n = 0;
+            const eachFakeCodes = document.querySelectorAll('.fake__num');
+            eachFakeCodes.forEach((el) => el.textContent = createFakeCodes());
+        }
+        el.style.strokeDasharray = `${n} 145`;
+    });
+}, 65);
+
 // 雛形生成するクラス 
 class CodeTemplate {
     constructor() {
@@ -48,10 +50,10 @@ class CodeTemplate {
 // clickでnodeを追加
 const addNewCode = () => {
         const template = new CodeTemplate().initTemplate();
-        const newLi = document.createElement('li');
-        newLi.className = "code-list__item";
-        newLi.innerHTML = template;
-        codeList.appendChild(newLi);
+        const newList = document.createElement('li');
+        newList.className = "code-list__item";
+        newList.innerHTML = template;
+        codeList.appendChild(newList);
     }
     // 削除
 const rmCode = () => {
@@ -64,6 +66,7 @@ rm.addEventListener('click', () => {
 });
 add.addEventListener('click', () => {
     addNewCode();
+
     rm.disabled = false;
 });
 
@@ -71,10 +74,4 @@ add.addEventListener('click', () => {
 addNewCode();
 addNewCode();
 addNewCode();
-rotatePerTen();
-
-setInterval(() => {
-    rotatePerTen();
-    const eachFakeCodes = document.querySelectorAll('.fake__num');
-    eachFakeCodes.forEach((el) => el.textContent = createFakeCodes());
-}, 10000);
+Circle10s();
