@@ -1,8 +1,7 @@
 import styled from "@emotion/styled";
-import { FC, memo, useEffect, useMemo, useState } from "react";
-import React from "react";
+import React, { FC, memo, useEffect, useMemo, useState } from "react";
 
-export default function App() {
+export default function App(): JSX.Element {
   const [count, setCount] = useState<number>(0);
   let [numbers, setNumbers] = useState<number[]>([1, 2, 3]);
   let listItem: JSX.Element[] = numbers.map((n) => (
@@ -11,7 +10,7 @@ export default function App() {
   let [nodes, setNodes] = useState<JSX.Element[]>(listItem);
 
   nodes = listItem;
-
+  // ここの余剰な再レンダリングはなるべく控えたい
   useMemo(() => {
     setTimeout(() => {
       if (count < 145) {
@@ -19,8 +18,12 @@ export default function App() {
       } else {
         setCount(0);
       }
-    }, 32);
+    }, 34);
   }, [count]);
+  /**
+   * onclickでのコード追加/削除イベント
+   * 上の関数なしでは動かなかった。（再レンダリングされなかった）
+   */
   const onClickPush = () => {
     numbers.push(numbers.length + 1);
     nodes.push(
@@ -45,21 +48,22 @@ export default function App() {
         <SMainTitle>Fake Authenticator</SMainTitle>
         <SBtnWrap>
           <button
-            disabled={nodes.length ? false : true}
+            disabled={nodes.length ? false : true} // リストが空になったらbuttonをdisabled
             onClick={() => onClickPop()}>
             -
           </button>
           <button onClick={() => onClickPush()}>+</button>
         </SBtnWrap>
+        {/* ここにリストを追加 */}
         <SCodeUl>{nodes}</SCodeUl>
       </SMainDiv>
     </>
   );
 }
-
+// 疑似乱数
 const createFakeCodes = (): string => {
-  const randomNum = Math.floor(Math.random() * 1000000);
-  const organizedNum = ("000000" + randomNum).slice(-6);
+  const randomNum: number = Math.floor(Math.random() * 1000000);
+  const organizedNum: string = ("000000" + randomNum).slice(-6);
   return organizedNum.slice(0, 3) + " " + organizedNum.slice(3, 6);
 };
 
@@ -67,14 +71,14 @@ type Props = {
   id: number;
   count: number;
 };
-
-const CodeList: FC<Props> = memo((props) => {
-  const { id, count } = props;
+// コードのリスト（子要素）
+const CodeList: FC<Props> = memo((props): JSX.Element => {
+  const { id } = props;
   const [codes, setCodes] = useState<string>(createFakeCodes());
-
+  // 10sごとに擬似乱数生成
   useEffect(() => {
-    const intervalB = setInterval(() => {
-      setCodes((c) => createFakeCodes());
+    const intervalB: NodeJS.Timer = setInterval(() => {
+      setCodes((c): string => createFakeCodes());
     }, 10000);
     return () => clearInterval(intervalB);
   }, []);
@@ -95,17 +99,20 @@ const CodeList: FC<Props> = memo((props) => {
     </>
   );
 });
-const AfterPie = memo(() => {
-  const [count, setCount] = useState(0);
+// ローダーのコンポーネント
+const AfterPie = memo((): JSX.Element => {
+  const [count, setCount] = useState<number>(0);
   setTimeout(() => {
+    // 10sかけてsvgのストロークが145に達するようにする
     if (count < 145) {
       setCount(count + 0.5);
     } else {
       setCount(0);
     }
-  }, 32);
+  }, 9830 / (145 * 2));
   return (
     <>
+      {/* <circle/>を使用。 */}
       <SAfterPie
         cx="50%"
         cy="50%"
@@ -115,6 +122,7 @@ const AfterPie = memo(() => {
     </>
   );
 });
+
 const SMainDiv = styled.div`
   font-family: Arial, Helvetica, sans-serif;
   width: 85%;
