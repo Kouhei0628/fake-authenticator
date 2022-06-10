@@ -42,6 +42,7 @@ export default function App(): JSX.Element {
     nodes.pop();
     setNodes(nodes);
   };
+
   return (
     <>
       <SMainDiv>
@@ -122,7 +123,6 @@ const AfterPie = memo((): JSX.Element => {
     </>
   );
 });
-
 const SMainDiv = styled.div`
   font-family: Arial, Helvetica, sans-serif;
   width: 85%;
