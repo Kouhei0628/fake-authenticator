@@ -1,4 +1,4 @@
-# 技術試験用認証アプリのリポジトリです。
+# 技術試験用　疑似的な認証アプリのリポジトリです。
 
 * JavaScript (VanillaJS)
 * TypeScript React
