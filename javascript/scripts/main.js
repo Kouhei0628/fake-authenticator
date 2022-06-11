@@ -5,32 +5,37 @@ const add = document.querySelector('.add');
 // <ul/>タグ 
 let codeList = document.querySelector('.code-list');
 
-//10sかけてsvg描画 
-function rotatePerTen() {
-    let n = 0;
-    const pie = document.querySelectorAll('.fake__pie__after');
-    setInterval(() => {
-        n += 0.5;
-        if (n > 145) {
-            clearInterval();
-        } else {
-            pie.forEach((el) => {
-                el.style.strokeDasharray = `${n} 145`;
-            });
-        }
-    }, 10000 / (145 * 2));
-}
+
 // 疑似乱数を3桁区切りで生成 
-const createFakeCodes = () => {
+const fakeCodeFactory = () => {
     const randomNum = Math.floor(Math.random() * 1000000);
-    const organizedNum = ("000000" + randomNum).slice(-6);
-    return organizedNum.slice(0, 3) + " " + organizedNum.slice(3, 6);
+    const to6Digits = ("000000" + randomNum).slice(-6);
+    return to6Digits.slice(0, 3) + " " + to6Digits.slice(3, 6);
 };
+//10sかけてsvg描画&コード生成 
+function rotateIn10s() {
+    let num = 0;
+    const interval = setInterval(() => {
+        num += 0.5;
+        const circles = document.querySelectorAll('.fake__pie__after');
+        circles.forEach((el) => {
+            el.style.strokeDasharray = `${num} 145`;
+        });
+    }, 10000 / (145 * 2));
+    setTimeout(() => {
+        clearInterval(interval);
+        rotateIn10s();
+        const eachFakeCodes = document.querySelectorAll('.fake__num');
+        eachFakeCodes.forEach((el) => el.textContent = fakeCodeFactory());
+    }, 10000);
+}
+rotateIn10s();
+
 // 雛形生成するクラス 
 class CodeTemplate {
     constructor() {
         this.initTemplate();
-        this.code = createFakeCodes();
+        this.code = fakeCodeFactory();
     }
     initTemplate() {
         return `
@@ -48,10 +53,10 @@ class CodeTemplate {
 // clickでnodeを追加
 const addNewCode = () => {
         const template = new CodeTemplate().initTemplate();
-        const newLi = document.createElement('li');
-        newLi.className = "code-list__item";
-        newLi.innerHTML = template;
-        codeList.appendChild(newLi);
+        const newList = document.createElement('li');
+        newList.className = "code-list__item";
+        newList.innerHTML = template;
+        codeList.appendChild(newList);
     }
     // 削除
 const rmCode = () => {
@@ -67,14 +72,7 @@ add.addEventListener('click', () => {
     rm.disabled = false;
 });
 
-/** 初期状態 */
+/** 初期状態として画面に3つ表示 */
 addNewCode();
 addNewCode();
 addNewCode();
-rotatePerTen();
-
-setInterval(() => {
-    rotatePerTen();
-    const eachFakeCodes = document.querySelectorAll('.fake__num');
-    eachFakeCodes.forEach((el) => el.textContent = createFakeCodes());
-}, 10000);

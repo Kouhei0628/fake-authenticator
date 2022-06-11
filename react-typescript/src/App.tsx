@@ -42,7 +42,7 @@ export default function App(): JSX.Element {
     nodes.pop();
     setNodes(nodes);
   };
-  
+
   return (
     <>
       <SMainDiv>
