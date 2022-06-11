@@ -5,34 +5,37 @@ const add = document.querySelector('.add');
 // <ul/>タグ 
 let codeList = document.querySelector('.code-list');
 
+
 // 疑似乱数を3桁区切りで生成 
-const createFakeCodes = () => {
+const fakeCodeFactory = () => {
     const randomNum = Math.floor(Math.random() * 1000000);
-    const organizedNum = ("000000" + randomNum).slice(-6);
-    return organizedNum.slice(0, 3) + " " + organizedNum.slice(3, 6);
+    const to6Digits = ("000000" + randomNum).slice(-6);
+    return to6Digits.slice(0, 3) + " " + to6Digits.slice(3, 6);
 };
-let n = 0;
-/** 10sほどでsvgのストロークが一周する 
- * 問題点：クリックで要素が追加される度に回転速度が早まってしまう
- * 逆に削除すると遅くなる。↓
- * */
-setInterval(() => {
-    const pies = document.querySelectorAll('.fake__pie__after');
-    pies.forEach((el) => {
-        if (n < 145) { n += 0.25 } else {
-            n = 0;
-            const eachFakeCodes = document.querySelectorAll('.fake__num');
-            eachFakeCodes.forEach((el) => el.textContent = createFakeCodes());
-        }
-        el.style.strokeDasharray = `${n} 145`;
-    });
-}, 65);
+//10sかけてsvg描画&コード生成 
+function rotateIn10s() {
+    let num = 0;
+    const interval = setInterval(() => {
+        num += 0.5;
+        const circles = document.querySelectorAll('.fake__pie__after');
+        circles.forEach((el) => {
+            el.style.strokeDasharray = `${num} 145`;
+        });
+    }, 10000 / (145 * 2));
+    setTimeout(() => {
+        clearInterval(interval);
+        rotateIn10s();
+        const eachFakeCodes = document.querySelectorAll('.fake__num');
+        eachFakeCodes.forEach((el) => el.textContent = fakeCodeFactory());
+    }, 10000);
+}
+rotateIn10s();
 
 // 雛形生成するクラス 
 class CodeTemplate {
     constructor() {
         this.initTemplate();
-        this.code = createFakeCodes();
+        this.code = fakeCodeFactory();
     }
     initTemplate() {
         return `
@@ -66,12 +69,10 @@ rm.addEventListener('click', () => {
 });
 add.addEventListener('click', () => {
     addNewCode();
-
     rm.disabled = false;
 });
 
-/** 初期状態 */
+/** 初期状態として画面に3つ表示 */
 addNewCode();
 addNewCode();
 addNewCode();
-Circle10s();
