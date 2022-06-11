@@ -11,6 +11,7 @@ https://user-images.githubusercontent.com/86821300/172866387-bf6cb5ab-0bd8-4972-
 
 ## JavaScript v2
 動作が若干改善されました。
+
 https://user-images.githubusercontent.com/86821300/173180323-f827f226-3be0-454b-8b47-19c6cfb0f409.mp4
 
 ## TypeScript React
