@@ -1,7 +1,7 @@
 # 技術試験用　疑似的な認証アプリのリポジトリです。
 
 * JavaScript (VanillaJS)
-* TypeScript React
+* TypeScript React(適正△)
 
 二つのバージョンを用意しました。二つで少しずつ挙動が違います。
 
