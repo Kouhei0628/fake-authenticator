@@ -31,31 +31,27 @@ function rotateIn10s() {
 }
 rotateIn10s();
 
-// 雛形生成するクラス 
-class CodeTemplate {
-    constructor() {
-        this.initTemplate();
-        this.code = fakeCodeFactory();
-    }
-    initTemplate() {
-        return `
+// 雛形生成
+function codeTemplate() {
+    const newCode = fakeCodeFactory();
+    return `
     <p class="code-number">Fake code No.${codeList.childElementCount + 1}</p>
     <div class="fake">
-        <p class="fake__num">${this.code}</p>
+        <p class="fake__num">${newCode}</p>
         <div class="fake__pie">
             <svg class="fake__pie__svg" viewBox="0 0 90 90">
                 <circle cx="50%" cy="50%" r="22.5" class="fake__pie__after"></circle>
             </svg>
         </div>
-    </div>`;
-    }
+    </div>
+    `;
 }
 // clickでnodeを追加
 const addNewCode = () => {
-        const template = new CodeTemplate().initTemplate();
+        const newTemplate = codeTemplate();
         const newList = document.createElement('li');
         newList.className = "code-list__item";
-        newList.innerHTML = template;
+        newList.innerHTML = newTemplate;
         codeList.appendChild(newList);
     }
     // 削除
@@ -72,7 +68,7 @@ add.addEventListener('click', () => {
     rm.disabled = false;
 });
 
-/** 初期状態として画面に3つ表示 */
+/** 初期状態 */
 addNewCode();
 addNewCode();
 addNewCode();
